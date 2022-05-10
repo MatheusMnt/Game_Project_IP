@@ -17,7 +17,7 @@ int main() {
     const float W2 = screenWidth / 2.0f;
     const float H2 = screenHeight / 2.0f;
 
-    Texture ff_img = LoadTexture("assets/ff.png");
+    Texture ff_img = LoadTexture("assets/carro.jpg");
     Texture chico_img = LoadTexture("assets/chico1.png");
 
     Sound song = LoadSound("assets/yes-baby.wav");
