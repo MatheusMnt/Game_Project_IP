@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <raylib.h>
 #include <math.h>
+#include <time.h>
+#include <stdlib.h>
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
@@ -8,6 +10,30 @@
 #define START_POS_X 1720
 #define START_POS_Y 45
 
+#define NUM_COIN 6
+
+Rectangle * loadCoin(int num_coin, Rectangle * moedas, Rectangle * paredes, Texture coin)
+{
+    moedas = (Rectangle *)malloc( sizeof(Rectangle) * num_coin);
+    srand(time(NULL));
+    for (int j = 0; j < num_coin; j++){
+            Rectangle moeda = {
+                .x = rand() % 950,
+                .y = 1250 + (rand() % 700),
+                .width = coin.width,                
+                .height = coin.height,
+            };
+        for (int i = 0;  i < 192; i ++){
+                if(CheckCollisionRecs(moeda, paredes[i])){
+                    moeda.x = rand() % 950;
+                    moeda.y = 1250 + (rand() % 700);
+                    i = 0;
+                }
+                moedas[j] = moeda;
+        }
+    }
+    return moedas;
+}
 
 void movimento();
 
@@ -35,6 +61,8 @@ int main (void){
     Texture2D playerstandfront = LoadTexture("assets/Player/standfront.png");
     Texture2D playerstandback = LoadTexture("assets/Player/standback.png");
     
+
+    Texture2D coin = LoadTexture("assets/new_coin.png");
     // Divisão de sprites do player
     float playerspritesback = (float)(playerback.width/2);
 
@@ -44,7 +72,6 @@ int main (void){
     float timer = 0.0f;
     int frame = 0;
     
-
     //posição do player, pode mudar a constante definida se quiser coloca-lo em outro lugar no mapa 
     Rectangle playerHitBox = {START_POS_X, START_POS_Y, (float)playerback.width / 20, playerback.height};
     
@@ -249,7 +276,11 @@ int main (void){
         {530, 1545, 13, 13},
         {1871, 2163, 24, 25}
     };
+
     
+    Rectangle *moedas = NULL;
+    moedas = loadCoin(NUM_COIN, moedas,  paredes1, coin);
+
     char buf[500] = {0};
 
     SetTargetFPS(60);
@@ -379,8 +410,9 @@ int main (void){
                             (Vector2){playerHitBox.x,playerHitBox.y},
                             RAYWHITE);}}
                 DrawTexture(portais, 0, 0, RAYWHITE); // Desenha Portais
-                
-                
+                for(int i = 0; i < NUM_COIN; i++){
+                    DrawTexture(coin, moedas[i].x, moedas[i].y, RAYWHITE);
+                }
                 //Apagar depois 
                 sprintf(buf, "pos x = %.2f pos y = %.2f", playerHitBox.x, playerHitBox.y);
                 DrawText(buf, playerHitBox.x - 100, playerHitBox.y - 100, 20, DARKGRAY);
